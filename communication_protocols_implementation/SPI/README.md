@@ -2,7 +2,7 @@
 
 ## Timing Diagram
 
-![SPI Master Transmit Timing Diagram](images/SPI_master_transmit_timing_diagram.PNG)
+![SPI Master Transmit Timing Diagram](images/SPI_master_transmit_state_diagram.PNG)
 
 ## State Diagram
 
