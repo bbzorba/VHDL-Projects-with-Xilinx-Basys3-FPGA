@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.Std_logic_1164.all;
 
-entity fsm_spi_tb is
+entity spi_master_transmit_FSM_tb is
 end;
 
 architecture bench of spi_master_transmit_FSM_tb is
@@ -12,7 +12,7 @@ architecture bench of spi_master_transmit_FSM_tb is
     );
     port( 
          clk, rst, tx_enable : in std_logic;
-         data : in std_logic_vector(7 downto 0);
+         data : in std_logic_vector(data_length - 1 downto 0);
          control : in std_logic_vector(3 downto 0);
          mosi, ss, sclk: out std_logic );
     end component;
@@ -57,24 +57,19 @@ begin
         wait for clock_period * 12;
         tx_enable <= '0';
         
-    
         wait; -- Continue indefinitely
     end process;
 
     
-    -- Clock generation process using a variable for stopping the clock
-    process
-        variable stop_the_clock_var: boolean := false;
+    -- Clock generation process
+    clk_process: process
     begin
-        while not stop_the_clock_var loop
+        while True loop
             clk <= '0';
             wait for clock_period / 2;
             clk <= '1';
             wait for clock_period / 2;
         end loop;
-        
-        -- Ensure simulation ends after the clock is stopped
-        wait;
     end process;
 
 end bench;

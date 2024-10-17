@@ -8,7 +8,7 @@ entity spi_master_transmit_FSM is
     );
     port( 
          clk, rst, tx_enable : in std_logic;
-         data : in std_logic_vector(7 downto 0);
+         data : in std_logic_vector(data_length - 1 downto 0);
          control : in std_logic_vector(3 downto 0);
          mosi, ss, sclk: out std_logic );
 end entity;
@@ -32,7 +32,7 @@ begin
             spi_sclk <= '0';
             clk_divider <= 0;
         elsif rising_edge(clk) then
-            if clk_divider = 3 then
+            if clk_divider = 7 then  -- Change this to 7 for a divide-by-8 clock divider
                 spi_sclk <= not spi_sclk;  -- Toggle spi_sclk
                 clk_divider <= 0;
             else
@@ -40,6 +40,7 @@ begin
             end if;
         end if;
     end process;
+
 
     -- Next state logic process, synchronous with spi_sclk
     process(spi_sclk, rst)
@@ -83,7 +84,7 @@ begin
                 
             when st1_tx_data_bits =>
                 ss <= '0';  -- Keep SS low
-                timer <= 8;  -- Length of data transmission
+                timer <= data_length;  -- Length of data transmission
                 mosi <= data(7 - data_index);  -- Send data bits
                 if data_index = 7 then
                     next_state <= st_idle;  -- After data transmission, go to idle
