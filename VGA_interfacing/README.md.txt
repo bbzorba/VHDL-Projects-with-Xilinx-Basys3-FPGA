@@ -1,0 +1,1 @@
+# VGA Interfacing of a CRT monitor having 640 x 480 resolution
