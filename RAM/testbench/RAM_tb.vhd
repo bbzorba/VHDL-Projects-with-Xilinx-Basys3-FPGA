@@ -1,0 +1,82 @@
+-- Example created by Kumar Gunasekaran 
+-- Kumar's VHDLBASIC videos:
+--   http://www.youtube.com/playlist?list=PLJ1g6uqLp358rFx54WUUPLi3HxcDLSO_m
+
+-- Testbench for RAM
+
+LIBRARY IEEE;
+    USE IEEE.STD_LOGIC_1164.ALL;
+    USE IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+ENTITY RAM_TB IS 
+-- empty
+END ENTITY;
+
+ARCHITECTURE BEV OF RAM_TB IS
+
+-- DUT component
+COMPONENT RAM_volatile IS
+  GENERIC(
+      DATA_SIZE : NATURAL := 8;
+      ADDRESS_SIZE : NATURAL := 8;
+      MEMORY_DEPTH : NATURAL := 256
+    );
+  PORT(
+       DATA_IN : IN STD_LOGIC_VECTOR(DATA_SIZE - 1 downto 0);
+       ADDRESS : IN STD_LOGIC_VECTOR(ADDRESS_SIZE - 1 downto 0);
+       Read_Write : IN STD_LOGIC;
+       DATA_OUT : OUT STD_LOGIC_VECTOR(DATA_SIZE - 1 downto 0)
+       );
+END COMPONENT;
+
+CONSTANT DATA_SIZE : NATURAL := 8;
+CONSTANT ADDRESS_SIZE : NATURAL := 8;
+
+SIGNAL DATA_IN : STD_LOGIC_VECTOR(DATA_SIZE - 1 DOWNTO 0):= "00000000";
+SIGNAL ADDRESS : STD_LOGIC_VECTOR(ADDRESS_SIZE - 1 DOWNTO 0):= "00000000";
+SIGNAL Read_Write : STD_LOGIC:='0';
+SIGNAL DATA_OUT : STD_LOGIC_VECTOR(DATA_SIZE - 1 DOWNTO 0);
+
+BEGIN
+
+  -- Connect DUT
+  UUT: RAM_volatile PORT MAP(DATA_IN => DATA_IN, 
+       ADDRESS => ADDRESS, 
+       Read_Write => Read_Write, 
+       DATA_OUT => DATA_OUT);
+
+  PROCESS
+  BEGIN
+    -- Write data into RAM
+    WAIT FOR 100 ns;
+    ADDRESS<="10000000";
+    DATA_IN<="01010111";
+    WAIT FOR 100 ns;
+    ADDRESS<="01000000";
+    DATA_IN<="10111010";
+    WAIT FOR 100 ns;
+    ADDRESS<="00100000";
+    DATA_IN<="11010111";
+    WAIT FOR 100 ns;
+    ADDRESS<="00010000";
+    DATA_IN<="01101111";
+    WAIT FOR 110 ns;
+
+    -- Read data from RAM
+    Read_Write<='1';
+    ADDRESS <= "00000000";
+    WAIT FOR 200 ns;
+    ADDRESS <= "10000000";
+    WAIT FOR 200 ns;
+    ADDRESS <= "01000000";
+    WAIT FOR 200 ns;
+    ADDRESS <= "00100000";
+    WAIT FOR 200 ns;
+    ADDRESS <= "00010000";
+    WAIT FOR 200 ns;
+    
+    ASSERT FALSE REPORT "Test done. Open EPWave to see signals." SEVERITY NOTE;
+    WAIT;
+  END PROCESS;
+
+END BEV;
